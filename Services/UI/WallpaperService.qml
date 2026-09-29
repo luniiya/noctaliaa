@@ -7,7 +7,7 @@ import qs.Commons
 import "../../Helpers/SystemWallpaper.js" as SystemWallpaper
 
 // The shell doesn't draw wallpapers; the system wallpaper daemon does. This service only
-// tracks which image each screen shows, for theming, the lock screen and the media card.
+// tracks which image each screen shows, for theming and the media card.
 Singleton {
   id: root
 

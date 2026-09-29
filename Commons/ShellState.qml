@@ -268,7 +268,6 @@ Singleton {
           noctaliaaPerformanceMode: PowerProfileService.noctaliaaPerformanceMode,
           barVisible: BarService.isVisible,
           openedPanel: PanelService.openedPanel?.objectName || "",
-          lockScreenActive: PanelService.lockScreen?.active || false,
           desktopWidgetsEditMode: DesktopWidgetRegistry.editMode || false,
           // -------------
           display: shellStateData.display || {},

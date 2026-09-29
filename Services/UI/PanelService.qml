@@ -8,8 +8,6 @@ import qs.Services.Compositor
 Singleton {
   id: root
 
-  // A ref. to the lockScreen, so it's accessible from anywhere.
-  property var lockScreen: null
 
   // Panels
   property var registeredPanels: ({})

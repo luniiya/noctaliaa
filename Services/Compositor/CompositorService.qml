@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Services.Control
-import qs.Services.UI
 
 Singleton {
   id: root
@@ -563,16 +562,6 @@ Singleton {
     Quickshell.execDetached(["sh", "-c", "systemctl suspend || loginctl suspend"]);
   }
 
-  function lock() {
-    Logger.i("Compositor", "LockScreen requested");
-    if (executeSessionAction("lock"))
-      return;
-
-    if (PanelService && PanelService.lockScreen) {
-      PanelService.lockScreen.active = true;
-    }
-  }
-
   function hibernate() {
     Logger.i("Compositor", "Hibernate requested");
     if (executeSessionAction("hibernate"))
@@ -587,79 +576,4 @@ Singleton {
     }
   }
 
-  property int lockAndSuspendCheckCount: 0
-
-  function lockAndSuspend() {
-    Logger.i("Compositor", "Lock and suspend requested");
-
-    // if a custom lock command exists, execute it and suspend without wait
-    if (executeSessionAction("lock")) {
-      suspend();
-      return;
-    }
-
-    // If already locked, suspend immediately
-    if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
-      Logger.i("Compositor", "Screen already locked, suspending");
-      suspend();
-      return;
-    }
-
-    // Lock the screen first
-    try {
-      if (PanelService && PanelService.lockScreen) {
-        PanelService.lockScreen.active = true;
-        lockAndSuspendCheckCount = 0;
-
-        // Wait for lock screen to be confirmed active before suspending
-        lockAndSuspendTimer.start();
-      } else {
-        Logger.w("Compositor", "Lock screen not available, suspending without lock");
-        suspend();
-      }
-    } catch (e) {
-      Logger.w("Compositor", "Failed to activate lock screen before suspend: " + e);
-      suspend();
-    }
-  }
-
-  Timer {
-    id: lockAndSuspendTimer
-    interval: 100
-    repeat: true
-    running: false
-
-    onTriggered: {
-      lockAndSuspendCheckCount++;
-
-      // Check if lock screen is now active
-      if (PanelService && PanelService.lockScreen && PanelService.lockScreen.active) {
-        // Verify the lock screen component is loaded
-        if (PanelService.lockScreen.item) {
-          Logger.i("Compositor", "Lock screen confirmed active, suspending");
-          stop();
-          lockAndSuspendCheckCount = 0;
-          suspend();
-        } else {
-          // Lock screen is active but component not loaded yet, wait a bit more
-          if (lockAndSuspendCheckCount > 20) {
-            // Max 2 seconds wait
-            Logger.w("Compositor", "Lock screen active but component not loaded, suspending anyway");
-            stop();
-            lockAndSuspendCheckCount = 0;
-            suspend();
-          }
-        }
-      } else {
-        // Lock screen not active yet, keep checking
-        if (lockAndSuspendCheckCount > 30) {
-          // Max 3 seconds wait
-          Logger.w("Compositor", "Lock screen failed to activate, suspending anyway");
-          stop();
-          lockAndSuspendCheckCount = 0;
-          suspend();
-        }
-      }
-    }
-  }
 }

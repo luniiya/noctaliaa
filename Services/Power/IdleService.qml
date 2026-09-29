@@ -4,15 +4,13 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Services.Compositor
-import qs.Services.UI
 
 /**
 * IdleService — native idle detection via ext-idle-notify-v1 Wayland protocol.
 *
-* Three configurable stages:
+* Two configurable stages:
 *   1. Screen-off (DPMS)  — dims / turns off monitors
-*   2. Lock screen        — activates the session lock
-*   3. Suspend            — systemctl suspend
+*   2. Suspend            — systemctl suspend
 *
 * Each stage shows a fade-to-black overlay for a configurable grace period
 * before executing the action. Any mouse movement cancels the fade.
@@ -37,7 +35,6 @@ Singleton {
 
   property bool _monitorsCreated: false
   property var _screenOffMonitor: null
-  property var _lockMonitor: null
   property var _suspendMonitor: null
   property var _heartbeatMonitor: null
   property var _customMonitors: ({})
@@ -46,7 +43,6 @@ Singleton {
 
   // Signals for external listeners (plugins, modules)
   signal screenOffRequested
-  signal lockRequested
   signal suspendRequested
 
   // -------------------------------------------------------
@@ -127,15 +123,13 @@ Singleton {
   }
 
   function _isValidStage(stage) {
-    return stage === "screenOff" || stage === "lock" || stage === "suspend";
+    return stage === "screenOff" || stage === "suspend";
   }
 
   function _isStageEnabled(stage) {
     const idle = Settings.data.idle;
     if (stage === "screenOff")
       return idle.screenOffTimeout > 0;
-    if (stage === "lock")
-      return idle.lockTimeout > 0;
     if (stage === "suspend")
       return idle.suspendTimeout > 0;
     return false;
@@ -193,21 +187,10 @@ Singleton {
       CompositorService.turnOffMonitors();
       root._screenOffActive = true;
       root.screenOffRequested();
-    } else if (stage === "lock") {
-      if (Settings.data.idle.lockCommand)
-        Quickshell.execDetached(["sh", "-c", Settings.data.idle.lockCommand]);
-      if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-        PanelService.lockScreen.active = true;
-      }
-      root.lockRequested();
     } else if (stage === "suspend") {
       if (Settings.data.idle.suspendCommand)
         Quickshell.execDetached(["sh", "-c", Settings.data.idle.suspendCommand]);
-      if (Settings.data.general.lockOnSuspend) {
-        CompositorService.lockAndSuspend();
-      } else {
-        CompositorService.suspend();
-      }
+      CompositorService.suspend();
       root.suspendRequested();
     } else {
       Logger.w("IdleService", "Unknown idle stage action:", stage);
@@ -228,9 +211,6 @@ Singleton {
     function onScreenOffTimeoutChanged() {
       root._applyTimeouts();
     }
-    function onLockTimeoutChanged() {
-      root._applyTimeouts();
-    }
     function onSuspendTimeoutChanged() {
       root._applyTimeouts();
     }
@@ -247,7 +227,6 @@ Singleton {
     const globalEnabled = idle.enabled;
 
     _setMonitor("screenOff", globalEnabled ? idle.screenOffTimeout : 0);
-    _setMonitor("lock", globalEnabled ? idle.lockTimeout : 0);
     _setMonitor("suspend", globalEnabled ? idle.suspendTimeout : 0);
     _ensureHeartbeat();
     _applyCustomMonitors();
@@ -376,10 +355,7 @@ Singleton {
         } else {
           idleCounter.stop();
           root.idleSeconds = 0;
-          if (root.fadePending === "lock" && Settings.data.idle.resumeLockCommand) {
-            Logger.i("IdleService", "Executing lock resume command");
-            Quickshell.execDetached(["sh", "-c", Settings.data.idle.resumeLockCommand]);
-          } else if (root.fadePending === "suspend" && Settings.data.idle.resumeSuspendCommand) {
+          if (root.fadePending === "suspend" && Settings.data.idle.resumeSuspendCommand) {
             Logger.i("IdleService", "Executing suspend resume command");
             Quickshell.execDetached(["sh", "-c", Settings.data.idle.resumeSuspendCommand]);
           }

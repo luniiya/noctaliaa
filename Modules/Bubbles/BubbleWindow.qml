@@ -34,7 +34,7 @@ PanelWindow {
   readonly property var placement: BubbleLogic.layout(Settings.data.bubbles.configurations, BubbleService.defaults, BubbleService.sizes, screen?.name, bubbleId, screen?.width || 1, screen?.height || 1)
   readonly property var body: BubbleLogic.bodyRect(configuration, width, height)
 
-  readonly property bool shouldShow: BubbleLogic.shouldShow(Settings.data.bubbles.enabled, widgets.length, configuration.hideOnFullscreen, fullscreen, PanelService.lockScreen?.active || false)
+  readonly property bool shouldShow: BubbleLogic.shouldShow(Settings.data.bubbles.enabled, widgets.length, configuration.hideOnFullscreen, fullscreen)
   // Surface creation can synchronously re-evaluate child bindings. Defer it
   // until configuration/visibility bindings have finished settling.
   property bool windowVisible: false

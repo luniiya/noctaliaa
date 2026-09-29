@@ -30,7 +30,7 @@ Singleton {
   - Settings: ~/.config/noctaliaa/settings/<hostname>.json (NOCTALIAA_SETTINGS_FILE overrides)
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 62
+  readonly property int settingsVersion: 63
   property bool isDebug: Quickshell.env("NOCTALIAA_DEBUG") === "1"
   readonly property string shellName: "noctaliaa"
   readonly property string configDir: ensureTrailingSlash(Quickshell.env("NOCTALIAA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/")
@@ -375,12 +375,6 @@ Singleton {
       property real screenRadiusRatio: 1.0
       property real animationSpeed: 1.0
       property bool animationDisabled: false
-      property bool compactLockScreen: false
-      property bool lockScreenAnimations: false
-      property bool lockOnSuspend: true
-      property bool showSessionButtonsOnLockScreen: true
-      property bool showHibernateOnLockScreen: false
-      property bool enableLockScreenMediaControls: false
       property bool enableShadows: true
       property bool enableBlurBehind: true
       property string shadowDirection: "bottom_right"
@@ -390,14 +384,6 @@ Singleton {
       property bool allowPanelsOnScreenWithoutBar: true
       property bool showChangelogOnStartup: true
       property bool telemetryEnabled: false
-      property bool enableLockScreenCountdown: true
-      property int lockScreenCountdownDuration: 10000
-      property bool autoStartAuth: false
-      property bool allowPasswordWithFprintd: false
-      property string clockStyle: "custom"
-      property string clockFormat: "hh\\nmm"
-      property bool passwordChars: false
-      property list<string> lockScreenMonitors: [] // holds lock screen visibility per monitor
       property JsonObject keybinds: JsonObject {
         property list<string> keyUp: ["Up"]
         property list<string> keyDown: ["Down"]
@@ -657,39 +643,34 @@ Singleton {
       property string largeButtonsLayout: "single-row"
       property list<var> powerOptions: [
         {
-          "action": "lock",
+          "action": "suspend",
           "enabled": true,
           "keybind": "1"
         },
         {
-          "action": "suspend",
+          "action": "hibernate",
           "enabled": true,
           "keybind": "2"
         },
         {
-          "action": "hibernate",
+          "action": "reboot",
           "enabled": true,
           "keybind": "3"
         },
         {
-          "action": "reboot",
+          "action": "logout",
           "enabled": true,
           "keybind": "4"
         },
         {
-          "action": "logout",
+          "action": "shutdown",
           "enabled": true,
           "keybind": "5"
         },
         {
-          "action": "shutdown",
-          "enabled": true,
-          "keybind": "6"
-        },
-        {
           "action": "rebootToUefi",
           "enabled": true,
-          "keybind": "7"
+          "keybind": "6"
         }
       ]
     }
@@ -797,8 +778,6 @@ Singleton {
     property JsonObject hooks: JsonObject {
       property bool enabled: false
       property string darkModeChange: ""
-      property string screenLock: ""
-      property string screenUnlock: ""
       property string performanceModeEnabled: ""
       property string performanceModeDisabled: ""
       property string startup: ""
@@ -816,14 +795,11 @@ Singleton {
     property JsonObject idle: JsonObject {
       property bool enabled: false
       property int screenOffTimeout: 600    // seconds, 0 = disabled
-      property int lockTimeout: 660         // seconds, 0 = disabled
       property int suspendTimeout: 1800     // seconds, 0 = disabled
       property int fadeDuration: 5       // seconds of fade-to-black before action fires
       property string screenOffCommand: ""
-      property string lockCommand: ""
       property string suspendCommand: ""
       property string resumeScreenOffCommand: ""
-      property string resumeLockCommand: ""
       property string resumeSuspendCommand: ""
       property string customCommands: "[]" // JSON array of {timeout, command, resumeCommand}
     }

@@ -25,8 +25,7 @@ Singleton {
 
   property var _registered: ({})
   readonly property int _registeredCount: Object.keys(_registered).length
-  readonly property bool _lockScreenActive: PanelService.lockScreen?.active ?? false
-  readonly property bool shouldRun: _registeredCount > 0 && !_lockScreenActive
+  readonly property bool shouldRun: _registeredCount > 0
 
   // Polling intervals (hardcoded to sensible values per stat type)
   readonly property int cpuUsageIntervalMs: 1000

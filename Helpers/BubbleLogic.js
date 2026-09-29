@@ -121,8 +121,8 @@ function animationVector(direction, step) {
   }
 }
 
-function shouldShow(enabled, widgetCount, hideOnFullscreen, fullscreen, locked) {
-  return enabled && widgetCount > 0 && !locked && !(hideOnFullscreen && fullscreen);
+function shouldShow(enabled, widgetCount, hideOnFullscreen, fullscreen) {
+  return enabled && widgetCount > 0 && !(hideOnFullscreen && fullscreen);
 }
 
 function shouldAutoCycle(visible, automatic, count, hovered, panelOpen) {

@@ -17,12 +17,6 @@ Item {
   // Session actions with search keywords
   readonly property var sessionActions: [
     {
-      "action": "lock",
-      "labelKey": "common.lock",
-      "icon": iconMode === "tabler" ? "lock" : "system-lock-screen",
-      "keywords": ["lock", "screen", "secure"]
-    },
-    {
       "action": "suspend",
       "labelKey": "common.suspend",
       "icon": iconMode === "tabler" ? "suspend" : "system-suspend",
@@ -157,17 +151,8 @@ Item {
       // (root may be destroyed after launcher.close() unloads the panel)
       Qt.callLater(() => {
                      switch (action) {
-                       case "lock":
-                       if (PanelService.lockScreen && !PanelService.lockScreen.active) {
-                         PanelService.lockScreen.active = true;
-                       }
-                       break;
                        case "suspend":
-                       if (Settings.data.general.lockOnSuspend) {
-                         CompositorService.lockAndSuspend();
-                       } else {
-                         CompositorService.suspend();
-                       }
+                       CompositorService.suspend();
                        break;
                        case "hibernate":
                        CompositorService.hibernate();

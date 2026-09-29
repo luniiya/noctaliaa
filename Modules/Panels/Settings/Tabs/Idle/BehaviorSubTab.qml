@@ -110,24 +110,6 @@ ColumnLayout {
     }
 
     DefaultActionRow {
-      actionName: I18n.tr("panels.idle.lock-label")
-      actionDescription: I18n.tr("panels.idle.lock-description")
-      timeoutValue: Settings.data.idle.lockTimeout
-      defaultValue: Settings.getDefaultValue("idle.lockTimeout")
-      command: Settings.data.idle.lockCommand
-      resumeCommand: Settings.data.idle.resumeLockCommand
-      onActionTimeoutChanged: val => Settings.data.idle.lockTimeout = val
-      onActionCommandChanged: cmd => {
-                                Settings.data.idle.lockCommand = cmd;
-                                Settings.saveImmediate();
-                              }
-      onActionResumeCommandChanged: cmd => {
-                                      Settings.data.idle.resumeLockCommand = cmd;
-                                      Settings.saveImmediate();
-                                    }
-    }
-
-    DefaultActionRow {
       actionName: I18n.tr("common.suspend")
       actionDescription: I18n.tr("panels.idle.suspend-description")
       timeoutValue: Settings.data.idle.suspendTimeout

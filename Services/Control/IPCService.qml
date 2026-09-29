@@ -87,7 +87,6 @@ Singleton {
                                             "audio": SettingsPanel.Tab.Audio,
                                             "bar": SettingsPanel.Tab.Bar,
                                             "colorscheme": SettingsPanel.Tab.ColorScheme,
-                                            "lockscreen": SettingsPanel.Tab.LockScreen,
                                             "controlcenter": SettingsPanel.Tab.ControlCenter,
                                             "desktopwidgets": SettingsPanel.Tab.DesktopWidgets,
                                             "osd": SettingsPanel.Tab.OSD,
@@ -405,18 +404,6 @@ Singleton {
   }
 
   IpcHandler {
-    target: "lockScreen"
-
-    // New preferred method - lock the screen
-    function lock() {
-      // Only lock if not already locked (prevents the red screen issue)
-      if (!PanelService.lockScreen.active) {
-        CompositorService.lock();
-      }
-    }
-  }
-
-  IpcHandler {
     target: "brightness"
     function increase() {
       BrightnessService.increaseBrightness();
@@ -561,18 +548,6 @@ Singleton {
                                             });
     }
 
-    function lock() {
-      if (!PanelService.lockScreen.active) {
-        CompositorService.lock();
-      }
-    }
-
-    function lockAndSuspend() {
-      // Only lock and suspend if not already locked
-      if (!PanelService.lockScreen.active) {
-        CompositorService.lockAndSuspend();
-      }
-    }
   }
 
   IpcHandler {

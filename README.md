@@ -4,7 +4,7 @@ My personal, opinionated fork of [Noctalia](https://github.com/noctalia-dev/noct
 
 Upstream moved on to v5 and v4 is archived. I liked v4, so I kept it alive and bent it to fit my own setup. This fork doesn't follow upstream anymore; things get added, changed or ripped out whenever that makes my desktop better.
 
-It's a Quickshell (QML) desktop shell for Wayland: bar, panels, launcher, notifications, lock screen, OSD, dock, desktop widgets and wallpaper-based theming.
+It's a Quickshell (QML) desktop shell for Wayland: bar, panels, launcher, notifications, OSD, dock, desktop widgets and wallpaper-based theming.
 
 > [!NOTE]
 > This is built for my machines first. You're welcome to use it or take pieces of it, but expect sharp opinions, breaking changes and no support promises.

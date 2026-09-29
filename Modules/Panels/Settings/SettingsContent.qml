@@ -16,7 +16,6 @@ import qs.Modules.Panels.Settings.Tabs.Dock
 import qs.Modules.Panels.Settings.Tabs.Hooks
 import qs.Modules.Panels.Settings.Tabs.Idle
 import qs.Modules.Panels.Settings.Tabs.Launcher
-import qs.Modules.Panels.Settings.Tabs.LockScreen
 import qs.Modules.Panels.Settings.Tabs.Notifications
 import qs.Modules.Panels.Settings.Tabs.Osd
 import qs.Modules.Panels.Settings.Tabs.Plugins
@@ -483,10 +482,6 @@ Item {
     UserInterfaceTab {}
   }
   Component {
-    id: lockScreenTab
-    LockScreenTab {}
-  }
-  Component {
     id: sessionMenuTab
     SessionMenuTab {}
   }
@@ -570,12 +565,6 @@ Item {
             "label": "panels.osd.title",
             "icon": "settings-osd",
             "source": osdTab
-          },
-          {
-            "id": SettingsPanel.Tab.LockScreen,
-            "label": "panels.lock-screen.title",
-            "icon": "settings-lock-screen",
-            "source": lockScreenTab
           },
           {
             "id": SettingsPanel.Tab.SessionMenu,

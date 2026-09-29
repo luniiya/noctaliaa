@@ -306,12 +306,11 @@ TestCase {
   }
 
   function test_visibility() {
-    verify(Bubbles.shouldShow(true, 1, true, false, false));
-    verify(!Bubbles.shouldShow(true, 1, true, true, false));
-    verify(Bubbles.shouldShow(true, 1, false, true, false));
-    verify(!Bubbles.shouldShow(false, 1, false, false, false));
-    verify(!Bubbles.shouldShow(true, 0, false, false, false));
-    verify(!Bubbles.shouldShow(true, 1, false, false, true));
+    verify(Bubbles.shouldShow(true, 1, true, false));
+    verify(!Bubbles.shouldShow(true, 1, true, true));
+    verify(Bubbles.shouldShow(true, 1, false, true));
+    verify(!Bubbles.shouldShow(false, 1, false, false));
+    verify(!Bubbles.shouldShow(true, 0, false, false));
   }
 
   function test_autoCyclePausesDuringInteractionAndRespectsManualMode() {

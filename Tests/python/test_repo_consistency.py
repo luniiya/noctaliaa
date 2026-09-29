@@ -91,6 +91,21 @@ class SettingsSchemaTests(unittest.TestCase):
         settings = (ROOT / "Commons" / "Settings.qml").read_text(encoding="utf-8")
         self.assertRegex(settings, r"property int notchGap: \d+")
 
+    def test_lock_screen_is_removed_from_shell_and_settings(self):
+        self.assertFalse((ROOT / "Modules" / "LockScreen").exists())
+        self.assertFalse((ROOT / "Modules" / "Panels" / "Settings" / "Tabs" / "LockScreen").exists())
+        shell = (ROOT / "shell.qml").read_text(encoding="utf-8")
+        settings = (ROOT / "Modules" / "Panels" / "Settings" / "SettingsContent.qml").read_text(encoding="utf-8")
+        self.assertNotIn("LockScreen", shell)
+        self.assertNotIn("LockScreen", settings)
+        self.assertNotIn("lockScreen", ipc_handlers())
+
+        defaults = json.loads((ROOT / "Assets" / "settings-default.json").read_text(encoding="utf-8"))
+        self.assertNotIn("lockTimeout", defaults["idle"])
+        self.assertNotIn("lockOnSuspend", defaults["general"])
+        self.assertNotIn("screenLock", defaults["hooks"])
+        self.assertNotIn("lock", [option["action"] for option in defaults["sessionMenu"]["powerOptions"]])
+
 
 class TrayWidgetDefaultsTests(unittest.TestCase):
     def test_colorize_style_default_matches_registry(self):

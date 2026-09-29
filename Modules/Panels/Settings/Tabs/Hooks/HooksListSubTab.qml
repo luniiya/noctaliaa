@@ -86,34 +86,6 @@ ColumnLayout {
                             })
   }
 
-  // Screen Lock Hook
-  HookRow {
-    label: I18n.tr("panels.hooks.screen-lock-label")
-    description: I18n.tr("panels.hooks.screen-lock-description")
-    value: Settings.data.hooks.screenLock
-    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screen-lock-placeholder"), value, newValue => {
-                              Settings.data.hooks.screenLock = newValue;
-                              Settings.saveImmediate();
-                            }, val => {
-                              if (val)
-                              Quickshell.execDetached(["sh", "-lc", val]);
-                            })
-  }
-
-  // Screen Unlock Hook
-  HookRow {
-    label: I18n.tr("panels.hooks.screen-unlock-label")
-    description: I18n.tr("panels.hooks.screen-unlock-description")
-    value: Settings.data.hooks.screenUnlock
-    onEditClicked: openEdit(label, description, I18n.tr("panels.hooks.screen-unlock-placeholder"), value, newValue => {
-                              Settings.data.hooks.screenUnlock = newValue;
-                              Settings.saveImmediate();
-                            }, val => {
-                              if (val)
-                              Quickshell.execDetached(["sh", "-lc", val]);
-                            })
-  }
-
   // Performance Mode Enabled Hook
   HookRow {
     label: I18n.tr("panels.hooks.performance-mode-enabled-label")

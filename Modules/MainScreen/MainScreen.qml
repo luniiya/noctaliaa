@@ -4,6 +4,7 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import "../../Helpers/NotchGeometry.js" as NotchGeometry
+import "../../Helpers/PanelDimmer.js" as PanelDimmer
 import "Backgrounds" as Backgrounds
 
 import qs.Commons
@@ -82,10 +83,7 @@ PanelWindow {
   property bool isAnyPanelOpen: PanelService.openedPanel !== null
 
   color: {
-    if (dimmerOpacity > 0 && isPanelOpen && !isPanelClosing) {
-      return Qt.alpha(Color.mShadow, dimmerOpacity);
-    }
-    return "transparent";
+    return Qt.rgba(0, 0, 0, PanelDimmer.opacity(isPanelOpen, isPanelClosing, dimmerOpacity));
   }
 
   Behavior on color {

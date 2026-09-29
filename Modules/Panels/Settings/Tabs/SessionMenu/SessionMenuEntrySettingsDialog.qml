@@ -18,7 +18,6 @@ Popup {
 
   // Default commands mapping
   readonly property var defaultCommands: {
-    "lock": I18n.tr("panels.session-menu.entry-settings-default-command-lock"),
     "suspend": "systemctl suspend || loginctl suspend",
     "hibernate": "systemctl hibernate || loginctl hibernate",
     "reboot": "systemctl reboot || loginctl reboot",

@@ -21,7 +21,6 @@ import qs.Modules.Bar
 import qs.Modules.Bubbles
 import qs.Modules.DesktopWidgets
 import qs.Modules.Dock
-import qs.Modules.LockScreen
 import qs.Modules.MainScreen
 import qs.Modules.Notification
 import qs.Modules.OSD
@@ -144,7 +143,6 @@ ShellRoot {
         }
       }
 
-      LockScreen {}
       FadeOverlay {}
 
       // Settings window mode (single window across all monitors)

@@ -147,12 +147,12 @@ Item {
     screen: root.screen
     section: root.section
     oppositeDirection: BarService.getPillDirection(root)
-    customIconColor: Color.resolveColorKeyOptional(root.iconColorKey)
-    customTextColor: Color.resolveColorKeyOptional(root.textColorKey)
+    customIconColor: AudioService.overdriveWidgetColor(AudioService.volume, Color.resolveColorKeyOptional(root.iconColorKey))
+    customTextColor: AudioService.overdriveWidgetColor(AudioService.volume, Color.resolveColorKeyOptional(root.textColorKey))
     icon: AudioService.getOutputIcon()
     autoHide: false // Important to be false so we can hover as long as we want
     text: {
-      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+      const maxVolume = AudioService.maxVolume;
       const displayVolume = Math.min(maxVolume, AudioService.volume);
       return Math.round(displayVolume * 100);
     }
@@ -166,7 +166,7 @@ Item {
         const nick = AudioService.sink?.nickname ?? "";
         const volumeText = I18n.tr("tooltips.volume-at", {
                                      "volume": (() => {
-                                       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                                       const maxVolume = AudioService.maxVolume;
                                        const displayVolume = Math.min(maxVolume, AudioService.volume);
                                        return Math.round(displayVolume * 100);
                                      })()

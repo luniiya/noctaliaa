@@ -6,6 +6,7 @@ import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs.Commons
 import qs.Services.System
+import "../../Helpers/AudioVolume.js" as AudioVolume
 
 Singleton {
   id: root
@@ -24,7 +25,8 @@ Singleton {
   readonly property bool hasInput: !!source
   readonly property list<PwNode> sinks: deviceNodes.sinks
   readonly property list<PwNode> sources: deviceNodes.sources
-  readonly property real maxVolume: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+  readonly property real maxVolume: AudioVolume.maxOutputVolume(Settings.data.audio.volumeOverdrive, Settings.data.audio.volumeOverdriveSelectedOnly, Settings.data.audio.volumeOverdriveDevices, sink)
+  readonly property real maxInputVolume: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
   readonly property real epsilon: 0.005
 
   // Fallback state sourced from wpctl when PipeWire node values go stale.
@@ -44,6 +46,39 @@ Singleton {
       return 0;
     }
     return Math.max(0, Math.min(root.maxVolume, vol));
+  }
+
+  function enforceOutputMax(): void {
+    if (wpctlAvailable && wpctlStateValid) {
+      if (wpctlOutputVolume > maxVolume) {
+        setVolume(maxVolume);
+      }
+    } else if (sink?.audio && sink.audio.volume > maxVolume) {
+      setVolume(maxVolume);
+    }
+  }
+
+  onMaxVolumeChanged: enforceOutputMax()
+
+  function overdriveDeviceKey(node): string {
+    return AudioVolume.deviceKey(node);
+  }
+
+  function isAboveNormalVolume(value: real): bool {
+    return AudioVolume.isAboveNormalVolume(value);
+  }
+
+  function overdriveWidgetColor(value: real, normalColor): var {
+    return AudioVolume.widgetColor(value, Settings.data.audio.overdriveWidgetColor, normalColor);
+  }
+
+  function isOverdriveAllowed(node): bool {
+    const key = overdriveDeviceKey(node);
+    return !!key && Settings.data.audio.volumeOverdriveDevices.indexOf(key) !== -1;
+  }
+
+  function setOverdriveAllowed(node, allowed: bool): void {
+    Settings.data.audio.volumeOverdriveDevices = AudioVolume.withDeviceAllowed(Settings.data.audio.volumeOverdriveDevices, node, allowed);
   }
 
   function refreshWpctlOutputState(): void {
@@ -74,9 +109,10 @@ Singleton {
       return false;
     }
 
-    wpctlOutputVolume = clampOutputVolume(parsedVolume);
+    wpctlOutputVolume = parsedVolume;
     wpctlOutputMuted = /\[MUTED\]/i.test(text);
     wpctlStateValid = true;
+    enforceOutputMax();
     return true;
   }
 
@@ -92,7 +128,7 @@ Singleton {
       return false;
     }
 
-    wpctlInputVolume = Math.max(0, Math.min(root.maxVolume, parsedVolume));
+    wpctlInputVolume = Math.max(0, Math.min(root.maxInputVolume, parsedVolume));
     wpctlInputMuted = /\[MUTED\]/i.test(text);
     wpctlInputStateValid = true;
     return true;
@@ -119,7 +155,7 @@ Singleton {
   // Input volume (prefer wpctl state when available — matches set-volume % round-trip)
   readonly property real inputVolume: {
     if (wpctlAvailable && wpctlInputStateValid) {
-      return Math.max(0, Math.min(root.maxVolume, wpctlInputVolume));
+      return Math.max(0, Math.min(root.maxInputVolume, wpctlInputVolume));
     }
     if (!source?.audio) {
       return 0;
@@ -128,7 +164,7 @@ Singleton {
     if (vol === undefined || isNaN(vol)) {
       return 0;
     }
-    return Math.max(0, Math.min(root.maxVolume, vol));
+    return Math.max(0, Math.min(root.maxInputVolume, vol));
   }
   readonly property bool inputMuted: {
     if (wpctlAvailable && wpctlInputStateValid) {
@@ -781,9 +817,11 @@ Singleton {
   Connections {
     target: root
     function onSinkChanged() {
+      root.wpctlStateValid = false;
       if (root.wpctlAvailable) {
         root.refreshWpctlOutputState();
       }
+      root.enforceOutputMax();
     }
 
     function onSourceChanged() {
@@ -883,7 +921,7 @@ Singleton {
         Logger.w("AudioService", "wpctl set-volume failed for default source, falling back to PipeWire node audio");
         if (root.source?.audio) {
           root.source.audio.muted = false;
-          root.source.audio.volume = Math.max(0, Math.min(root.maxVolume, root.wpctlInputVolume));
+          root.source.audio.volume = Math.max(0, Math.min(root.maxInputVolume, root.wpctlInputVolume));
         }
       }
       root.refreshWpctlInputState();
@@ -971,11 +1009,11 @@ Singleton {
       }
 
       // If volume exceeds max, clamp it (but only if we didn't just set it)
-      if (vol > root.maxVolume) {
+      if (vol > root.maxInputVolume) {
         root.isSettingInputVolume = true;
         Qt.callLater(() => {
-                       if (root.source?.audio && root.source.audio.volume > root.maxVolume) {
-                         root.source.audio.volume = root.maxVolume;
+                       if (root.source?.audio && root.source.audio.volume > root.maxInputVolume) {
+                         root.source.audio.volume = root.maxInputVolume;
                        }
                        root.isSettingInputVolume = false;
                      });
@@ -1019,7 +1057,8 @@ Singleton {
     }
 
     const clampedVolume = clampOutputVolume(newVolume);
-    const delta = Math.abs(clampedVolume - volume);
+    const currentVolume = wpctlAvailable && wpctlStateValid ? wpctlOutputVolume : (sink?.audio?.volume ?? volume);
+    const delta = Math.abs(clampedVolume - currentVolume);
     if (delta < root.epsilon) {
       return;
     }
@@ -1103,10 +1142,10 @@ Singleton {
     if (!Pipewire.ready || (!source?.audio && !wpctlAvailable)) {
       return;
     }
-    if (inputVolume >= root.maxVolume) {
+    if (inputVolume >= root.maxInputVolume) {
       return;
     }
-    setInputVolume(Math.min(root.maxVolume, inputVolume + stepVolume));
+    setInputVolume(Math.min(root.maxInputVolume, inputVolume + stepVolume));
   }
 
   function decreaseInputVolume() {
@@ -1121,7 +1160,7 @@ Singleton {
       return;
     }
 
-    const clampedVolume = Math.max(0, Math.min(root.maxVolume, newVolume));
+    const clampedVolume = Math.max(0, Math.min(root.maxInputVolume, newVolume));
     var currentVol = 0;
     if (wpctlAvailable && wpctlInputStateValid) {
       currentVol = wpctlInputVolume;

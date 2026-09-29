@@ -41,8 +41,9 @@ ColumnLayout {
       label: I18n.tr("panels.osd.types-volume-label")
       description: I18n.tr("panels.audio.volumes-output-volume-description")
       from: 0
-      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+      to: AudioService.maxVolume
       value: localVolume
+      fillColor: AudioService.isAboveNormalVolume(localVolume) ? Color.mError : Color.mPrimary
       stepSize: 0.01
       text: Math.round(AudioService.volume * 100) + "%"
       onMoved: value => localVolume = value
@@ -123,7 +124,7 @@ ColumnLayout {
       label: I18n.tr("panels.osd.types-input-volume-label")
       description: I18n.tr("panels.audio.volumes-input-volume-description")
       from: 0
-      to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+      to: AudioService.maxInputVolume
       value: AudioService.inputVolume
       stepSize: 0.01
       text: Math.round(AudioService.inputVolume * 100) + "%"
@@ -178,6 +179,48 @@ ColumnLayout {
       checked: Settings.data.audio.volumeOverdrive
       defaultValue: Settings.getDefaultValue("audio.volumeOverdrive")
       onToggled: checked => Settings.data.audio.volumeOverdrive = checked
+    }
+
+    NTextInput {
+      enabled: Settings.data.audio.volumeOverdrive
+      label: I18n.tr("panels.audio.volumes-overdrive-widget-color-label")
+      description: I18n.tr("panels.audio.volumes-overdrive-widget-color-description")
+      placeholderText: I18n.tr("panels.audio.volumes-overdrive-widget-color-placeholder")
+      text: Settings.data.audio.overdriveWidgetColor
+      defaultValue: Settings.getDefaultValue("audio.overdriveWidgetColor")
+      onTextChanged: Settings.data.audio.overdriveWidgetColor = text
+    }
+
+    NToggle {
+      enabled: Settings.data.audio.volumeOverdrive
+      label: I18n.tr("panels.audio.volumes-overdrive-selected-label")
+      description: I18n.tr("panels.audio.volumes-overdrive-selected-description")
+      checked: Settings.data.audio.volumeOverdriveSelectedOnly
+      defaultValue: Settings.getDefaultValue("audio.volumeOverdriveSelectedOnly")
+      onToggled: checked => Settings.data.audio.volumeOverdriveSelectedOnly = checked
+    }
+
+    ColumnLayout {
+      visible: Settings.data.audio.volumeOverdrive && Settings.data.audio.volumeOverdriveSelectedOnly
+      Layout.fillWidth: true
+      spacing: Style.marginXS
+
+      NLabel {
+        label: I18n.tr("panels.audio.volumes-overdrive-devices-label")
+        description: I18n.tr("panels.audio.volumes-overdrive-devices-description")
+      }
+
+      Repeater {
+        model: AudioService.sinks
+        NToggle {
+          required property var modelData
+          enabled: !!AudioService.overdriveDeviceKey(modelData)
+          label: modelData.description || AudioService.overdriveDeviceKey(modelData)
+          checked: AudioService.isOverdriveAllowed(modelData)
+          defaultValue: Settings.getDefaultValue("audio.volumeOverdriveDevices").indexOf(AudioService.overdriveDeviceKey(modelData)) !== -1
+          onToggled: checked => AudioService.setOverdriveAllowed(modelData, checked)
+        }
+      }
     }
   }
 

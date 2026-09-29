@@ -742,6 +742,9 @@ Singleton {
     property JsonObject audio: JsonObject {
       property int volumeStep: 5
       property bool volumeOverdrive: false
+      property string overdriveWidgetColor: ""
+      property bool volumeOverdriveSelectedOnly: false
+      property list<string> volumeOverdriveDevices: []
       property int spectrumFrameRate: 30
       property string visualizerType: "linear"
       property bool spectrumMirrored: true

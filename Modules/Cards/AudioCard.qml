@@ -175,8 +175,9 @@ NBox {
         id: outputVolumeSlider
         Layout.fillWidth: true
         from: 0
-        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+        to: AudioService.maxVolume
         value: localOutputVolume
+        fillColor: AudioService.isAboveNormalVolume(localOutputVolume) ? Color.mError : Color.mPrimary
         stepSize: 0.01
         heightRatio: 0.5
         onMoved: localOutputVolume = value
@@ -196,7 +197,7 @@ NBox {
                        const delta = wheel.angleDelta.y || wheel.angleDelta.x;
                        const step = Settings.data.audio.volumeStep / 100.0; // Convert percentage to 0-1 range
                        const increment = delta > 0 ? step : -step;
-                       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                       const maxVolume = AudioService.maxVolume;
                        const newValue = Math.max(0, Math.min(maxVolume, localOutputVolume + increment));
                        localOutputVolume = newValue;
                      }
@@ -243,7 +244,7 @@ NBox {
         id: inputVolumeSlider
         Layout.fillWidth: true
         from: 0
-        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+        to: AudioService.maxInputVolume
         value: localInputVolume
         stepSize: 0.01
         heightRatio: 0.5
@@ -264,7 +265,7 @@ NBox {
                        const delta = wheel.angleDelta.y || wheel.angleDelta.x;
                        const step = Settings.data.audio.volumeStep / 100.0; // Convert percentage to 0-1 range
                        const increment = delta > 0 ? step : -step;
-                       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                       const maxVolume = AudioService.maxInputVolume;
                        const newValue = Math.max(0, Math.min(maxVolume, localInputVolume + increment));
                        localInputVolume = newValue;
                      }

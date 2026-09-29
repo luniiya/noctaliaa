@@ -12,6 +12,7 @@ RowLayout {
   property real value: 0
   property real stepSize: 0.01
   property var cutoutColor: Color.mSurface
+  property color fillColor: Color.mPrimary
   property bool snapAlways: true
   property real heightRatio: 0.7
   property string text: ""
@@ -78,6 +79,7 @@ RowLayout {
         value: root.value
         stepSize: root.stepSize
         cutoutColor: root.cutoutColor
+        fillColor: root.fillColor
         snapAlways: root.snapAlways
         heightRatio: root.customHeightRatio > 0 ? root.customHeightRatio : root.heightRatio
         onMoved: root.moved(value)

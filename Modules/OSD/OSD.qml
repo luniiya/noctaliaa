@@ -102,7 +102,7 @@ Variants {
 
     function getMaxValue() {
       if (currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) {
-        return Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+        return currentOSDType === OSD.Type.Volume ? AudioService.maxVolume : AudioService.maxInputVolume;
       }
       return 1.0;
     }
@@ -115,7 +115,7 @@ Variants {
 
       const value = getCurrentValue();
       const max = getMaxValue();
-      if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && Settings.data.audio.volumeOverdrive) {
+      if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && max > 1.0) {
         const pct = Math.round(value * 100);
         return pct + "%";
       }
@@ -129,7 +129,7 @@ Variants {
         return Color.mError;
       }
       // When volumeOverdrive is enabled, show error color if volume is above 100%
-      if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && Settings.data.audio.volumeOverdrive) {
+      if ((currentOSDType === OSD.Type.Volume || currentOSDType === OSD.Type.InputVolume) && getMaxValue() > 1.0) {
         const value = getCurrentValue();
         if (value > 1.0) {
           return Color.mError;

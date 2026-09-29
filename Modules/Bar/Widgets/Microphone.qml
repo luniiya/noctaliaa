@@ -137,7 +137,7 @@ Item {
     icon: AudioService.getInputIcon()
     autoHide: false // Important to be false so we can hover as long as we want
     text: {
-      const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+      const maxVolume = AudioService.maxInputVolume;
       const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
       return Math.round(displayVolume * 100);
     }
@@ -151,7 +151,7 @@ Item {
         const nick = AudioService.source?.nickname ?? "";
         const volumeText = I18n.tr("tooltips.microphone-volume-at", {
                                      "volume": (() => {
-                                       const maxVolume = Settings.data.audio.volumeOverdrive ? 1.5 : 1.0;
+                                       const maxVolume = AudioService.maxInputVolume;
                                        const displayVolume = Math.min(maxVolume, AudioService.inputVolume);
                                        return Math.round(displayVolume * 100);
                                      })()

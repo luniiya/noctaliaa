@@ -153,6 +153,36 @@
     "subTabLabel": "common.volumes"
   },
   {
+    "labelKey": "panels.audio.volumes-overdrive-widget-color-label",
+    "descriptionKey": "panels.audio.volumes-overdrive-widget-color-description",
+    "widget": "NTextInput",
+    "tab": 14,
+    "tabLabel": "panels.audio.title",
+    "subTab": 0,
+    "subTabLabel": "common.volumes"
+  },
+  {
+    "labelKey": "panels.audio.volumes-overdrive-selected-label",
+    "descriptionKey": "panels.audio.volumes-overdrive-selected-description",
+    "widget": "NToggle",
+    "tab": 14,
+    "tabLabel": "panels.audio.title",
+    "subTab": 0,
+    "subTabLabel": "common.volumes"
+  },
+  {
+    "labelKey": "panels.audio.volumes-overdrive-devices-label",
+    "descriptionKey": "panels.audio.volumes-overdrive-devices-description",
+    "widget": "NLabel",
+    "tab": 14,
+    "tabLabel": "panels.audio.title",
+    "subTab": 0,
+    "subTabLabel": "common.volumes",
+    "visibleWhen": [
+      "Settings.data.audio.volumeOverdrive && Settings.data.audio.volumeOverdriveSelectedOnly"
+    ]
+  },
+  {
     "labelKey": "panels.bar.appearance-position-label",
     "descriptionKey": "panels.bar.appearance-position-description",
     "widget": "NComboBox",

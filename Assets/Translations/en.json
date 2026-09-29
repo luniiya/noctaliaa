@@ -902,8 +902,15 @@
       "volumes-step-size-label": "Volume step size",
       "volumes-volume-feedback-description": "Play a feedback sound when adjusting volume.",
       "volumes-volume-feedback-label": "Play volume feedback sound",
-      "volumes-volume-overdrive-description": "Allow raising volume above 100%. May not be supported by all hardware.",
-      "volumes-volume-overdrive-label": "Allow volume overdrive"
+      "volumes-volume-overdrive-description": "Allow raising volume to 150%. May not be supported by all hardware.",
+      "volumes-volume-overdrive-label": "Allow volume overdrive",
+      "volumes-overdrive-selected-label": "Limit overdrive to selected output devices",
+      "volumes-overdrive-selected-description": "Only the output devices selected below can go above 100%. Microphone input follows the main overdrive switch.",
+      "volumes-overdrive-devices-label": "Output devices allowed above 100%",
+      "volumes-overdrive-devices-description": "Choose which connected output devices can reach 150%.",
+      "volumes-overdrive-widget-color-label": "Bar volume warning color",
+      "volumes-overdrive-widget-color-description": "Enter a hex color for the bar volume icon and percentage above 100%. Leave empty to keep their normal color.",
+      "volumes-overdrive-widget-color-placeholder": "#ff0000 (optional)"
     },
     "bar": {
       "appearance-auto-hide-delay-description": "Time before bar hides after mouse leaves",

@@ -447,6 +447,9 @@
   "audio": {
     "volumeStep": 5,
     "volumeOverdrive": false,
+    "overdriveWidgetColor": "",
+    "volumeOverdriveSelectedOnly": false,
+    "volumeOverdriveDevices": [],
     "spectrumFrameRate": 30,
     "visualizerType": "linear",
     "spectrumMirrored": true,

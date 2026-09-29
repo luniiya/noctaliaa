@@ -278,8 +278,9 @@ SmartPanel {
                     id: outputVolumeSlider
                     Layout.fillWidth: true
                     from: 0
-                    to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                    to: AudioService.maxVolume
                     value: localOutputVolume
+                    fillColor: AudioService.isAboveNormalVolume(localOutputVolume) ? Color.mError : Color.mPrimary
                     stepSize: 0.01
                     heightRatio: 0.5
                     onMoved: function (value) {
@@ -354,7 +355,7 @@ SmartPanel {
                     id: inputVolumeSlider
                     Layout.fillWidth: true
                     from: 0
-                    to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                    to: AudioService.maxInputVolume
                     value: localInputVolume
                     stepSize: 0.01
                     heightRatio: 0.5
@@ -676,8 +677,9 @@ SmartPanel {
                       NValueSlider {
                         Layout.fillWidth: true
                         from: 0
-                        to: Settings.data.audio.volumeOverdrive ? 1.5 : 1.0
+                        to: AudioService.maxVolume
                         value: (appBox.appVolume !== undefined) ? appBox.appVolume : 0.0
+                        fillColor: AudioService.isAboveNormalVolume(appBox.appVolume ?? 0) ? Color.mError : Color.mPrimary
                         stepSize: 0.01
                         heightRatio: 0.5
                         enabled: !!(appBox.nodeAudio && appBox.modelData && appBox.modelData.ready === true)

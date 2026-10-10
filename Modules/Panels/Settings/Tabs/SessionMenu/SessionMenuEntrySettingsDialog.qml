@@ -18,6 +18,7 @@ Popup {
 
   // Default commands mapping
   readonly property var defaultCommands: {
+    "lock": Settings.data.general.lockCommand,
     "suspend": "systemctl suspend || loginctl suspend",
     "hibernate": "systemctl hibernate || loginctl hibernate",
     "reboot": "systemctl reboot || loginctl reboot",

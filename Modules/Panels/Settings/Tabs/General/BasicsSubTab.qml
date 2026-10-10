@@ -69,6 +69,19 @@ ColumnLayout {
     Layout.bottomMargin: Style.marginM
   }
 
+  NTextInput {
+    label: I18n.tr("panels.general.external-lock-command-label")
+    description: I18n.tr("panels.general.external-lock-command-description")
+    placeholderText: "hyprlock"
+    text: Settings.data.general.lockCommand
+    defaultValue: Settings.getDefaultValue("general.lockCommand")
+    onTextChanged: Settings.data.general.lockCommand = text
+  }
+
+  NDivider {
+    Layout.fillWidth: true
+  }
+
   // Fonts
   ColumnLayout {
     spacing: Style.marginL

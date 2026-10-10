@@ -55,6 +55,7 @@ from lib import (
     TemplateRenderer, expand_predefined_scheme,
     extract_source_color, source_color_to_rgb, Color,
 )
+from lib.palette import is_grayscale_image
 from lib.scheme import inject_terminal_colors
 
 
@@ -166,6 +167,8 @@ def main() -> int:
     else:
         modes = ["dark", "light"]
 
+    renderer_scheme_type = args.scheme_type
+
     # Path 1: Predefined scheme (--scheme flag)
     if args.scheme:
         if not args.scheme.exists():
@@ -264,6 +267,11 @@ def main() -> int:
                 print(f"Unexpected error reading image: {e}", file=sys.stderr)
                 return 1
 
+            # Grayscale wallpapers should stay grayscale for every generation method.
+            if is_grayscale_image(pixels):
+                scheme_type = "monochrome"
+                renderer_scheme_type = scheme_type
+
             # Extract palette based on scheme type:
             # - M3 schemes (tonal-spot, fruit-salad, rainbow, content): Use Wu quantizer + Score
             #   This matches matugen's color extraction exactly
@@ -298,7 +306,16 @@ def main() -> int:
 
             # Generate theme for each mode
             for mode in modes:
-                result[mode] = generate_theme(palette, mode, scheme_type)
+                theme = generate_theme(palette, mode, scheme_type)
+                if scheme_type == "monochrome" and is_grayscale_image(pixels):
+                    # M3 monochrome keeps the standard colored error role; grayscale
+                    # wallpapers should produce a fully neutral generated palette.
+                    for key, value in theme.items():
+                        if isinstance(value, str) and value.startswith("#") and len(value) == 7:
+                            red, green, blue = (int(value[i:i + 2], 16) for i in (1, 3, 5))
+                            gray = round(0.2126 * red + 0.7152 * green + 0.0722 * blue)
+                            theme[key] = f"#{gray:02X}{gray:02X}{gray:02X}"
+                result[mode] = theme
 
     # Output JSON
     json_output = json.dumps(result, indent=2)
@@ -316,7 +333,7 @@ def main() -> int:
     # Process templates
     if args.render or args.config:
         image_path = str(args.image) if args.image else None
-        renderer = TemplateRenderer(result, default_mode=args.default_mode, image_path=image_path, scheme_type=args.scheme_type)
+        renderer = TemplateRenderer(result, default_mode=args.default_mode, image_path=image_path, scheme_type=renderer_scheme_type)
 
         if args.render:
             for render_spec in args.render:

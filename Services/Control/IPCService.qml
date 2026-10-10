@@ -404,6 +404,13 @@ Singleton {
   }
 
   IpcHandler {
+    target: "lockScreen"
+    function lock() {
+      CompositorService.lock();
+    }
+  }
+
+  IpcHandler {
     target: "brightness"
     function increase() {
       BrightnessService.increaseBrightness();
@@ -546,6 +553,14 @@ Singleton {
                                               // Session Menu is never open near the bar
                                               sessionMenuPanel?.toggle();
                                             });
+    }
+
+    function lock() {
+      CompositorService.lock();
+    }
+
+    function lockAndSuspend() {
+      CompositorService.suspend();
     }
 
   }

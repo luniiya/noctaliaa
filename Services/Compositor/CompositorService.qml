@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../Helpers/LockCommand.js" as LockCommand
 import qs.Commons
 import qs.Services.Control
 
@@ -556,6 +557,46 @@ Singleton {
 
   function suspend() {
     Logger.i("Compositor", "Suspend requested");
+    if (suspendAfterLockTimer.running)
+      return;
+    if (lock()) {
+      suspendAfterLockTimer.start();
+      return;
+    }
+    performSuspend();
+  }
+
+  function lock(): bool {
+    const command = LockCommand.resolve(Settings.data.general.lockCommand, getCustomCommand("lock"));
+    if (!command)
+      return false;
+    if (lockProcess.running)
+      return true;
+    Logger.i("Compositor", "Starting external lock command");
+    lockProcess.command = ["sh", "-c", command];
+    lockProcess.running = true;
+    return true;
+  }
+
+  Process {
+    id: lockProcess
+    running: false
+    onExited: function (code) {
+      if (code !== 0) {
+        Logger.e("Compositor", "External lock command failed with exit code " + code);
+        suspendAfterLockTimer.stop();
+      }
+    }
+  }
+
+  Timer {
+    id: suspendAfterLockTimer
+    interval: 1000
+    repeat: false
+    onTriggered: root.performSuspend()
+  }
+
+  function performSuspend() {
     if (executeSessionAction("suspend"))
       return;
 

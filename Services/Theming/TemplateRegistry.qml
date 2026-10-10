@@ -92,7 +92,7 @@ Singleton {
           "input": "gtk4.css"
         }
       ],
-      "postProcess": mode => `python3 ${gtkRefreshScript} ${mode}`
+      "postProcess": mode => `python3 ${Quickshell.env("HOME")}/.config/bin/noctalia-gtk-theme.py ${mode}`
     },
     {
       "id": "qt",

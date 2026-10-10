@@ -1442,6 +1442,14 @@
     "subTab": null
   },
   {
+    "labelKey": "panels.general.external-lock-command-label",
+    "descriptionKey": "panels.general.external-lock-command-description",
+    "widget": "NTextInput",
+    "tab": 0,
+    "tabLabel": "common.general",
+    "subTab": null
+  },
+  {
     "labelKey": "panels.general.fonts-default-label",
     "descriptionKey": "panels.general.fonts-default-description",
     "widget": "NSearchableComboBox",

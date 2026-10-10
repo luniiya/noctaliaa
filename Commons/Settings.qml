@@ -30,7 +30,7 @@ Singleton {
   - Settings: ~/.config/noctaliaa/settings/<hostname>.json (NOCTALIAA_SETTINGS_FILE overrides)
   */
   readonly property alias data: adapter  // Used to access via Settings.data.xxx.yyy
-  readonly property int settingsVersion: 63
+  readonly property int settingsVersion: 64
   property bool isDebug: Quickshell.env("NOCTALIAA_DEBUG") === "1"
   readonly property string shellName: "noctaliaa"
   readonly property string configDir: ensureTrailingSlash(Quickshell.env("NOCTALIAA_CONFIG_DIR") || (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/" + shellName + "/")
@@ -366,6 +366,7 @@ Singleton {
     property JsonObject general: JsonObject {
       property string avatarImage: ""
       property real dimmerOpacity: 0.2
+      property string lockCommand: "hyprlock"
       property bool showScreenCorners: false
       property bool forceBlackScreenCorners: true
       property real scaleRatio: 1.0
@@ -643,34 +644,39 @@ Singleton {
       property string largeButtonsLayout: "single-row"
       property list<var> powerOptions: [
         {
-          "action": "suspend",
+          "action": "lock",
           "enabled": true,
           "keybind": "1"
         },
         {
-          "action": "hibernate",
+          "action": "suspend",
           "enabled": true,
           "keybind": "2"
         },
         {
-          "action": "reboot",
+          "action": "hibernate",
           "enabled": true,
           "keybind": "3"
         },
         {
-          "action": "logout",
+          "action": "reboot",
           "enabled": true,
           "keybind": "4"
         },
         {
-          "action": "shutdown",
+          "action": "logout",
           "enabled": true,
           "keybind": "5"
         },
         {
-          "action": "rebootToUefi",
+          "action": "shutdown",
           "enabled": true,
           "keybind": "6"
+        },
+        {
+          "action": "rebootToUefi",
+          "enabled": true,
+          "keybind": "7"
         }
       ]
     }

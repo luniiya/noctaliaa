@@ -14,6 +14,12 @@ ColumnLayout {
   property list<var> entriesModel: []
   property list<var> entriesDefault: [
     {
+      "id": "lock",
+      "text": I18n.tr("common.lock"),
+      "enabled": true,
+      "required": false
+    },
+    {
       "id": "suspend",
       "text": I18n.tr("common.suspend"),
       "enabled": true,

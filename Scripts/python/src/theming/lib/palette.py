@@ -16,6 +16,14 @@ HSL = tuple[float, float, float]
 LAB = tuple[float, float, float]
 
 
+def is_grayscale_image(pixels: list[RGB], threshold: float = 0.95, tolerance: int = 10) -> bool:
+    """Return whether at least ``threshold`` of sampled pixels are near gray."""
+    if not pixels:
+        return False
+    grayscale_count = sum(1 for r, g, b in pixels if max(r, g, b) - min(r, g, b) <= tolerance)
+    return grayscale_count / len(pixels) >= threshold
+
+
 def downsample_pixels(pixels: list[RGB], factor: int = 4) -> list[RGB]:
     """
     Downsample pixels for faster processing.

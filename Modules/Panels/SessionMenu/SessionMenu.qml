@@ -86,6 +86,11 @@ SmartPanel {
 
   // Action metadata mapping
   readonly property var actionMetadata: {
+    "lock": {
+      "icon": "lock",
+      "title": I18n.tr("common.lock"),
+      "isShutdown": false
+    },
     "suspend": {
       "icon": "suspend",
       "title": I18n.tr("common.suspend"),
@@ -226,6 +231,9 @@ SmartPanel {
 
     // Use default behavior or custom command handled by CompositorService
     switch (action) {
+    case "lock":
+      CompositorService.lock();
+      break;
     case "suspend":
       CompositorService.suspend();
       break;
